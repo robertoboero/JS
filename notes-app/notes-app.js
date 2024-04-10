@@ -1,44 +1,29 @@
-let notes = [];
+const notes = getSavedNotes();
 const filters = { searchText: "" };
+let orderNotes = [];
 
 document.querySelector("#filter").addEventListener("input", function (e) {
   filters.searchText = e.target.value;
   renderNotes(notes, filters);
 });
 
-document.querySelectorAll(".note").forEach(function (note, index) {
-  const attributes = {
-    title: note.textContent,
-  };
-  notes.push(attributes);
-});
-
-const notesJSON = localStorage.getItem("notes");
-if (notesJSON != null) {
-  notes = JSON.parse(notesJSON);
-}
 renderNotes(notes, filters);
 
 document.querySelector("#create-note").addEventListener("submit", function (e) {
   e.preventDefault();
-  notes.push({ title: e.target.elements.title.value });
-  localStorage.setItem("notes", JSON.stringify(notes));
-  renderNotes(notes, filters);
+  const id = uuidv4();
+  const now = moment();
+  notes.push({
+    id: id,
+    title: e.target.elements.title.value,
+    body: "",
+    createAt: now.unix(),
+    updatedAt: now.unix(),
+  });
+  saveNotes(notes);
+  location.assign("edit.html#" + id);
   e.target.elements.title.value = "";
 });
-
-function renderNotes(notes, filters) {
-  document.querySelector(".notes").innerHTML = "";
-  const filteredNotes = notes.filter(function (note) {
-    return note.title.toLowerCase().includes(filters.searchText.toLowerCase());
-  });
-
-  filteredNotes.forEach(function (note) {
-    const p = document.createElement("p");
-    p.textContent = note.title;
-    document.querySelector(".notes").appendChild(p);
-  });
-}
 
 document.querySelector("#create-note").addEventListener("reset", function (e) {
   e.preventDefault();
@@ -49,7 +34,58 @@ document.querySelector("#create-note").addEventListener("reset", function (e) {
 });
 
 document.querySelector("#filter-by").addEventListener("change", function (e) {
-  console.log(e.target.value);
+  const orderFilter = e.target.value;
+  const orderNotes = notes.filter((note) => true);
+  switch (orderFilter) {
+    case "byEditing":
+      orderNotes.sort((a, b) => {
+        if (a.updatedAt > b.updatedAt) {
+          return -1;
+        }
+        if (a.updatedAt < b.updatedAt) {
+          return 1;
+        }
+        return 0;
+      });
+
+      break;
+
+    case "byCreated":
+      orderNotes.sort((a, b) => {
+        if (a.createAt > b.createAt) {
+          return -1;
+        }
+        if (a.createAt < b.createAt) {
+          return 1;
+        }
+        return 0;
+      });
+      break;
+
+    case "byAlpha":
+      orderNotes.sort((a, b) => {
+        if (a.title < b.title) {
+          return -1;
+        }
+        if (a.title > b.title) {
+          return 1;
+        }
+        return 0;
+      });
+      break;
+    default:
+      break;
+  }
+  renderNotes(orderNotes, filters);
+});
+
+window.addEventListener("storage", function (e) {
+  if (e.key === "notes") {
+    notes = JSON.parse(e.newValue);
+    filters = { searchText: "" };
+
+    renderNotes(notes, filters);
+  }
 });
 
 /* document.querySelector("form").addEventListener("submit", function (e) {
