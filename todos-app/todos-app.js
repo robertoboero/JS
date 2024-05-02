@@ -1,14 +1,14 @@
+"use strict";
+
 const todos = getSavedTodos();
 const filters = {
   searchText: "",
   hideCompleted: false,
 };
 
-const addTodo = function () {};
-
 renderTodos(todos, filters);
 
-document.querySelector("#newTodo").addEventListener("submit", function (e) {
+document.querySelector("#newTodo").addEventListener("submit", (e) => {
   e.preventDefault();
   todos.push({
     id: uuidv4(),
@@ -20,15 +20,13 @@ document.querySelector("#newTodo").addEventListener("submit", function (e) {
   e.target.elements.text.value = "";
 });
 
-document
-  .querySelector("#hide-completed")
-  .addEventListener("change", function (e) {
-    document.querySelector(".lista").innerHTML = "";
-    filters.hideCompleted = e.target.checked;
-    renderTodos(todos, filters);
-  });
+document.querySelector("#hide-completed").addEventListener("change", (e) => {
+  document.querySelector(".lista").innerHTML = "";
+  filters.hideCompleted = e.target.checked;
+  renderTodos(todos, filters);
+});
 
-document.getElementById("filter-todo").addEventListener("input", function (e) {
+document.getElementById("filter-todo").addEventListener("input", (e) => {
   filters.searchText = e.target.value;
   renderTodos(todos, filters);
 });
@@ -41,7 +39,7 @@ document.getElementById("filter-todo").addEventListener("input", function (e) {
 
 function removeP() {
   const ps = document.querySelectorAll("p");
-  console.log(ps);
+
   ps.forEach((p, index) => {
     if (p.textContent.includes("was")) {
       p.remove();

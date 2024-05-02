@@ -1,18 +1,18 @@
 // Read exiting notes
-const getSavedNotes = function () {
+const getSavedNotes = () => {
   const notesJSON = localStorage.getItem("notes");
-  if (notesJSON != null) {
-    return JSON.parse(notesJSON);
-  } else {
+  try {
+    return notesJSON ? JSON.parse(notesJSON) : [];
+  } catch (err) {
     return [];
   }
 };
 //Save notes to local storage
-const saveNotes = function (notes) {
+const saveNotes = (notes) => {
   localStorage.setItem("notes", JSON.stringify(notes));
 };
 
-const removeNote = function (id) {
+const removeNote = (id) => {
   const notesIndex = notes.findIndex((note) => note.id === id);
   if (notesIndex > -1) {
     notes.splice(notesIndex, 1);
@@ -20,14 +20,14 @@ const removeNote = function (id) {
 };
 
 //Genera la lista dei todo
-const generateDOM = function (note) {
+const generateDOM = (note) => {
   const li = document.createElement("li");
   const a = document.createElement("a");
   const span = document.createElement("span");
   const button = document.createElement("button");
 
   button.textContent = "x";
-  button.addEventListener("click", function () {
+  button.addEventListener("click", () => {
     removeNote(note.id);
     saveNotes(notes);
     renderNotes(notes, filters);
@@ -41,13 +41,13 @@ const generateDOM = function (note) {
   return li;
 };
 
-const renderNotes = function (notes, filters) {
+const renderNotes = (notes, filters) => {
   document.querySelector(".notes").innerHTML = "";
   const filteredNotes = notes.filter((note) =>
     note.title.toLowerCase().includes(filters.searchText.toLowerCase())
   );
 
-  filteredNotes.forEach(function (note) {
+  filteredNotes.forEach((note) => {
     const p = generateDOM(note);
     document.querySelector(".notes").appendChild(p);
   });

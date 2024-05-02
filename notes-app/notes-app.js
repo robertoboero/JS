@@ -1,15 +1,17 @@
+"use strict";
+
 const notes = getSavedNotes();
 const filters = { searchText: "" };
 let orderNotes = [];
 
-document.querySelector("#filter").addEventListener("input", function (e) {
+document.querySelector("#filter").addEventListener("input", (e) => {
   filters.searchText = e.target.value;
   renderNotes(notes, filters);
 });
 
 renderNotes(notes, filters);
 
-document.querySelector("#create-note").addEventListener("submit", function (e) {
+document.querySelector("#create-note").addEventListener("submit", (e) => {
   e.preventDefault();
   const id = uuidv4();
   const now = moment();
@@ -25,7 +27,7 @@ document.querySelector("#create-note").addEventListener("submit", function (e) {
   e.target.elements.title.value = "";
 });
 
-document.querySelector("#create-note").addEventListener("reset", function (e) {
+document.querySelector("#create-note").addEventListener("reset", (e) => {
   e.preventDefault();
   notes = [];
   localStorage.removeItem("notes");
@@ -33,7 +35,7 @@ document.querySelector("#create-note").addEventListener("reset", function (e) {
   renderNotes(notes, filters);
 });
 
-document.querySelector("#filter-by").addEventListener("change", function (e) {
+document.querySelector("#filter-by").addEventListener("change", (e) => {
   const orderFilter = e.target.value;
   const orderNotes = notes.filter((note) => true);
   switch (orderFilter) {
@@ -79,7 +81,7 @@ document.querySelector("#filter-by").addEventListener("change", function (e) {
   renderNotes(orderNotes, filters);
 });
 
-window.addEventListener("storage", function (e) {
+window.addEventListener("storage", (e) => {
   if (e.key === "notes") {
     notes = JSON.parse(e.newValue);
     filters = { searchText: "" };
